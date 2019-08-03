@@ -1,0 +1,952 @@
+2018-09-27 10:49:17  caught exception in util.set_context:Request is not available in this context
+2018-09-27 10:49:17  threadproc_votes
+2018-09-27 10:49:17  sql=
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[votes_view]'))
+drop view [votes_view]
+2018-09-27 10:49:17  started creating Lucene index using folder C:\btnet\www\App_Data\lucene_index
+2018-09-27 10:49:17  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:49:17  sql=
+
+/* get searchable cols */					
+select sc.name
+from syscolumns sc
+inner join systypes st on st.xusertype = sc.xusertype
+inner join sysobjects so on sc.id = so.id
+where so.name = 'bugs'
+and st.[name] <> 'sysname'
+and sc.name not in ('rowguid',
+'bg_id',
+'bg_short_desc',
+'bg_reported_user',
+'bg_reported_date',
+'bg_project',
+'bg_org',
+'bg_category',
+'bg_priority',
+'bg_status',
+'bg_assigned_to_user',
+'bg_last_updated_user',
+'bg_last_updated_date',
+'bg_user_defined_attribute',
+'bg_project_custom_dropdown_value1',
+'bg_project_custom_dropdown_value2',
+'bg_project_custom_dropdown_value3',
+'bg_tags')
+and st.[name] in ('nvarchar','varchar')
+and sc.length > 30
+2018-09-27 10:49:17 http://192.168.0.42/default.aspx sql=
+select count(1) from users
+2018-09-27 10:49:18  sql=
+
+create view votes_view as
+select bu_bug as vote_bug, sum(bu_vote) as vote_total
+from bug_user
+group by bu_bug
+having sum(bu_vote) > 0
+2018-09-27 10:49:18  sql=
+
+select bu_bug, count(1)
+from bug_user 
+where bu_vote = 1
+group by bu_bug
+2018-09-27 10:49:18  elapsed milliseconds:0375
+2018-09-27 10:49:18  elapsed milliseconds:0492
+2018-09-27 10:49:18  elapsed milliseconds:0491
+2018-09-27 10:49:18  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:49:18  sql=
+
+select bg_id, 	
+
+isnull(bg_tags,'') bg_tags,
+bg_short_desc
+from bugs
+2018-09-27 10:49:18  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:49:18  elapsed milliseconds:0020
+2018-09-27 10:49:18  elapsed milliseconds:0011
+2018-09-27 10:49:18  sql=
+
+select bp_bug, bp_id, 
+isnull(bp_comment_search,bp_comment) [text] 
+from bug_posts 
+where bp_type <> 'update'
+and bp_hidden_from_external_users = 0
+2018-09-27 10:49:18  elapsed milliseconds:0003
+2018-09-27 10:49:18  done creating Lucene index
+2018-09-27 10:49:18  pop3:+OK POP server ready H mieueus022 1MRmTO-1gCRsE0o6k-00TFMD
+2018-09-27 10:49:18  pop3:sending POP3 command USER
+2018-09-27 10:49:19  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:49:19  pop3:sending POP3 command PASS
+2018-09-27 10:49:19  pop3:-ERR authentication failed
+2018-09-27 10:49:19  pop3:sending POP3 command STAT
+2018-09-27 10:49:19  pop3:Connection state not = TRANSACTION
+2018-09-27 10:49:19  pop3:sending POP3 command LIST
+2018-09-27 10:49:19  pop3:list follows:
+2018-09-27 10:49:19  Connection state not = TRANSACTION
+2018-09-27 10:49:19  pop3:quit
+2018-09-27 10:49:19  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:50:19  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:50:19  elapsed milliseconds:0005
+2018-09-27 10:50:19  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:50:19  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:50:19  elapsed milliseconds:0016
+2018-09-27 10:50:20  pop3:+OK POP server ready H mieueus033 1MVuLB-1gDGKt1ceb-00Rtmv
+2018-09-27 10:50:20  pop3:sending POP3 command USER
+2018-09-27 10:50:20  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:50:20  pop3:sending POP3 command PASS
+2018-09-27 10:50:20  pop3:-ERR authentication failed
+2018-09-27 10:50:20  pop3:sending POP3 command STAT
+2018-09-27 10:50:20  pop3:Connection state not = TRANSACTION
+2018-09-27 10:50:20  pop3:sending POP3 command LIST
+2018-09-27 10:50:20  pop3:list follows:
+2018-09-27 10:50:20  Connection state not = TRANSACTION
+2018-09-27 10:50:20  pop3:quit
+2018-09-27 10:50:20  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:51:20  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:51:20  elapsed milliseconds:0006
+2018-09-27 10:51:20  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:51:20  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:51:20  elapsed milliseconds:0014
+2018-09-27 10:51:21  pop3:+OK POP server ready H mieueus022 1MkH5x-1fLaLe2jvt-00keJ8
+2018-09-27 10:51:21  pop3:sending POP3 command USER
+2018-09-27 10:51:21  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:51:21  pop3:sending POP3 command PASS
+2018-09-27 10:51:21  pop3:-ERR authentication failed
+2018-09-27 10:51:21  pop3:sending POP3 command STAT
+2018-09-27 10:51:21  pop3:Connection state not = TRANSACTION
+2018-09-27 10:51:21  pop3:sending POP3 command LIST
+2018-09-27 10:51:21  pop3:list follows:
+2018-09-27 10:51:21  Connection state not = TRANSACTION
+2018-09-27 10:51:21  pop3:quit
+2018-09-27 10:51:21  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:52:21  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:52:21  elapsed milliseconds:0004
+2018-09-27 10:52:21  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:52:21  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:52:21  elapsed milliseconds:0015
+2018-09-27 10:52:22  pop3:+OK POP server ready H mieueus033 1MXZ2J-1gG2GS2oW7-00YxYO
+2018-09-27 10:52:22  pop3:sending POP3 command USER
+2018-09-27 10:52:22  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:52:22  pop3:sending POP3 command PASS
+2018-09-27 10:52:23  pop3:-ERR authentication failed
+2018-09-27 10:52:23  pop3:sending POP3 command STAT
+2018-09-27 10:52:23  pop3:Connection state not = TRANSACTION
+2018-09-27 10:52:23  pop3:sending POP3 command LIST
+2018-09-27 10:52:23  pop3:list follows:
+2018-09-27 10:52:23  Connection state not = TRANSACTION
+2018-09-27 10:52:23  pop3:quit
+2018-09-27 10:52:23  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:53:23  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:53:23  elapsed milliseconds:0004
+2018-09-27 10:53:23  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:53:23  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:53:23  elapsed milliseconds:0008
+2018-09-27 10:53:23  pop3:+OK POP server ready H mieueus031 1M6ESa-1g7ceU2k5w-006h4L
+2018-09-27 10:53:23  pop3:sending POP3 command USER
+2018-09-27 10:53:23  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:53:23  pop3:sending POP3 command PASS
+2018-09-27 10:53:24  pop3:-ERR authentication failed
+2018-09-27 10:53:24  pop3:sending POP3 command STAT
+2018-09-27 10:53:24  pop3:Connection state not = TRANSACTION
+2018-09-27 10:53:24  pop3:sending POP3 command LIST
+2018-09-27 10:53:24  pop3:list follows:
+2018-09-27 10:53:24  Connection state not = TRANSACTION
+2018-09-27 10:53:24  pop3:quit
+2018-09-27 10:53:24  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:54:24  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:54:24  elapsed milliseconds:0004
+2018-09-27 10:54:24  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:54:24  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:54:24  elapsed milliseconds:0014
+2018-09-27 10:54:24  pop3:+OK POP server ready H mieueus032 1Mog0z-1fQ0B01d8r-00p8R2
+2018-09-27 10:54:24  pop3:sending POP3 command USER
+2018-09-27 10:54:25  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:54:25  pop3:sending POP3 command PASS
+2018-09-27 10:54:25  pop3:-ERR authentication failed
+2018-09-27 10:54:25  pop3:sending POP3 command STAT
+2018-09-27 10:54:25  pop3:Connection state not = TRANSACTION
+2018-09-27 10:54:25  pop3:sending POP3 command LIST
+2018-09-27 10:54:25  pop3:list follows:
+2018-09-27 10:54:25  Connection state not = TRANSACTION
+2018-09-27 10:54:25  pop3:quit
+2018-09-27 10:54:25  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:55:25  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:55:25  elapsed milliseconds:0004
+2018-09-27 10:55:25  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:55:25  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:55:25  elapsed milliseconds:0016
+2018-09-27 10:55:25  pop3:+OK POP server ready H mieueus013 0LkyPr-1fVWBI27hF-00akXN
+2018-09-27 10:55:25  pop3:sending POP3 command USER
+2018-09-27 10:55:26  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:55:26  pop3:sending POP3 command PASS
+2018-09-27 10:55:26  pop3:-ERR authentication failed
+2018-09-27 10:55:26  pop3:sending POP3 command STAT
+2018-09-27 10:55:26  pop3:Connection state not = TRANSACTION
+2018-09-27 10:55:26  pop3:sending POP3 command LIST
+2018-09-27 10:55:26  pop3:list follows:
+2018-09-27 10:55:26  Connection state not = TRANSACTION
+2018-09-27 10:55:26  pop3:quit
+2018-09-27 10:55:26  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:56:26  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:56:26  elapsed milliseconds:0001
+2018-09-27 10:56:26  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:56:26  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:56:26  elapsed milliseconds:0004
+2018-09-27 10:56:27  pop3:+OK POP server ready H mieueus021 1M5ORd-1g4Ztj0mU1-001R2F
+2018-09-27 10:56:27  pop3:sending POP3 command USER
+2018-09-27 10:56:27  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:56:27  pop3:sending POP3 command PASS
+2018-09-27 10:56:27  pop3:-ERR authentication failed
+2018-09-27 10:56:27  pop3:sending POP3 command STAT
+2018-09-27 10:56:27  pop3:Connection state not = TRANSACTION
+2018-09-27 10:56:27  pop3:sending POP3 command LIST
+2018-09-27 10:56:27  pop3:list follows:
+2018-09-27 10:56:27  Connection state not = TRANSACTION
+2018-09-27 10:56:27  pop3:quit
+2018-09-27 10:56:27  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:57:27  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:57:27  elapsed milliseconds:0002
+2018-09-27 10:57:27  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:57:27  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:57:27  elapsed milliseconds:0006
+2018-09-27 10:57:28  pop3:+OK POP server ready H mieueus014 0MJBNM-1g3k2A1JFa-002lpj
+2018-09-27 10:57:28  pop3:sending POP3 command USER
+2018-09-27 10:57:28  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:57:28  pop3:sending POP3 command PASS
+2018-09-27 10:57:28  pop3:-ERR authentication failed
+2018-09-27 10:57:28  pop3:sending POP3 command STAT
+2018-09-27 10:57:28  pop3:Connection state not = TRANSACTION
+2018-09-27 10:57:28  pop3:sending POP3 command LIST
+2018-09-27 10:57:28  pop3:list follows:
+2018-09-27 10:57:28  Connection state not = TRANSACTION
+2018-09-27 10:57:28  pop3:quit
+2018-09-27 10:57:28  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:58:28  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:58:28  elapsed milliseconds:0004
+2018-09-27 10:58:28  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:58:28  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:58:28  elapsed milliseconds:0014
+2018-09-27 10:58:29  pop3:+OK POP server ready H mieueus022 1MsYaN-1fmUFN0TM3-00u5Ia
+2018-09-27 10:58:29  pop3:sending POP3 command USER
+2018-09-27 10:58:29  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:58:29  pop3:sending POP3 command PASS
+2018-09-27 10:58:29  pop3:-ERR authentication failed
+2018-09-27 10:58:29  pop3:sending POP3 command STAT
+2018-09-27 10:58:29  pop3:Connection state not = TRANSACTION
+2018-09-27 10:58:29  pop3:sending POP3 command LIST
+2018-09-27 10:58:29  pop3:list follows:
+2018-09-27 10:58:29  Connection state not = TRANSACTION
+2018-09-27 10:58:29  pop3:quit
+2018-09-27 10:58:29  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 10:59:29  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 10:59:29  elapsed milliseconds:0004
+2018-09-27 10:59:29  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 10:59:29  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 10:59:29  elapsed milliseconds:0014
+2018-09-27 10:59:30  pop3:+OK POP server ready H mieueus022 1Mt6of-1flw0E1rjN-00tR29
+2018-09-27 10:59:30  pop3:sending POP3 command USER
+2018-09-27 10:59:30  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 10:59:30  pop3:sending POP3 command PASS
+2018-09-27 10:59:31  pop3:-ERR authentication failed
+2018-09-27 10:59:31  pop3:sending POP3 command STAT
+2018-09-27 10:59:31  pop3:Connection state not = TRANSACTION
+2018-09-27 10:59:31  pop3:sending POP3 command LIST
+2018-09-27 10:59:31  pop3:list follows:
+2018-09-27 10:59:31  Connection state not = TRANSACTION
+2018-09-27 10:59:31  pop3:quit
+2018-09-27 10:59:31  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:00:31  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:00:31  elapsed milliseconds:0004
+2018-09-27 11:00:31  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:00:31  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:00:31  elapsed milliseconds:0012
+2018-09-27 11:00:31  pop3:+OK POP server ready H mieueus032 1Mkoex-1fL1jO25i3-00mJdt
+2018-09-27 11:00:31  pop3:sending POP3 command USER
+2018-09-27 11:00:31  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:00:31  pop3:sending POP3 command PASS
+2018-09-27 11:00:32  pop3:-ERR authentication failed
+2018-09-27 11:00:32  pop3:sending POP3 command STAT
+2018-09-27 11:00:32  pop3:Connection state not = TRANSACTION
+2018-09-27 11:00:32  pop3:sending POP3 command LIST
+2018-09-27 11:00:32  pop3:list follows:
+2018-09-27 11:00:32  Connection state not = TRANSACTION
+2018-09-27 11:00:32  pop3:quit
+2018-09-27 11:00:32  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:01:32  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:01:32  elapsed milliseconds:0004
+2018-09-27 11:01:32  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:01:32  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:01:32  elapsed milliseconds:0015
+2018-09-27 11:01:32  pop3:+OK POP server ready H mieueus015 0MF3uf-1fzbEP26LT-00GFgc
+2018-09-27 11:01:32  pop3:sending POP3 command USER
+2018-09-27 11:01:33  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:01:33  pop3:sending POP3 command PASS
+2018-09-27 11:01:33  pop3:-ERR authentication failed
+2018-09-27 11:01:33  pop3:sending POP3 command STAT
+2018-09-27 11:01:33  pop3:Connection state not = TRANSACTION
+2018-09-27 11:01:33  pop3:sending POP3 command LIST
+2018-09-27 11:01:33  pop3:list follows:
+2018-09-27 11:01:33  Connection state not = TRANSACTION
+2018-09-27 11:01:33  pop3:quit
+2018-09-27 11:01:33  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:02:33  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:02:33  elapsed milliseconds:0004
+2018-09-27 11:02:33  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:02:33  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:02:33  elapsed milliseconds:0015
+2018-09-27 11:02:34  pop3:+OK POP server ready H mieueus020 1MRmbe-1gCRGS1avK-00THL8
+2018-09-27 11:02:34  pop3:sending POP3 command USER
+2018-09-27 11:02:34  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:02:34  pop3:sending POP3 command PASS
+2018-09-27 11:02:34  pop3:-ERR authentication failed
+2018-09-27 11:02:34  pop3:sending POP3 command STAT
+2018-09-27 11:02:34  pop3:Connection state not = TRANSACTION
+2018-09-27 11:02:34  pop3:sending POP3 command LIST
+2018-09-27 11:02:34  pop3:list follows:
+2018-09-27 11:02:34  Connection state not = TRANSACTION
+2018-09-27 11:02:34  pop3:quit
+2018-09-27 11:02:34  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:03:34  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:03:34  elapsed milliseconds:0000
+2018-09-27 11:03:34  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:03:34  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:03:34  elapsed milliseconds:0000
+2018-09-27 11:03:35  pop3:+OK POP server ready H mieueus016 0Llmxq-1fWL7c3y2i-00ZP9B
+2018-09-27 11:03:35  pop3:sending POP3 command USER
+2018-09-27 11:03:35  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:03:35  pop3:sending POP3 command PASS
+2018-09-27 11:03:36  pop3:-ERR authentication failed
+2018-09-27 11:03:36  pop3:sending POP3 command STAT
+2018-09-27 11:03:36  pop3:Connection state not = TRANSACTION
+2018-09-27 11:03:36  pop3:sending POP3 command LIST
+2018-09-27 11:03:36  pop3:list follows:
+2018-09-27 11:03:36  Connection state not = TRANSACTION
+2018-09-27 11:03:36  pop3:quit
+2018-09-27 11:03:36  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:04:36  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:04:36  elapsed milliseconds:0004
+2018-09-27 11:04:36  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:04:36  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:04:36  elapsed milliseconds:0015
+2018-09-27 11:04:36  pop3:+OK POP server ready H mieueus031 1N0pBp-1frT1K3Zkz-00wmIl
+2018-09-27 11:04:36  pop3:sending POP3 command USER
+2018-09-27 11:04:36  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:04:36  pop3:sending POP3 command PASS
+2018-09-27 11:04:37  pop3:-ERR authentication failed
+2018-09-27 11:04:37  pop3:sending POP3 command STAT
+2018-09-27 11:04:37  pop3:Connection state not = TRANSACTION
+2018-09-27 11:04:37  pop3:sending POP3 command LIST
+2018-09-27 11:04:37  pop3:list follows:
+2018-09-27 11:04:37  Connection state not = TRANSACTION
+2018-09-27 11:04:37  pop3:quit
+2018-09-27 11:04:37  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:05:37  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:05:37  elapsed milliseconds:0004
+2018-09-27 11:05:37  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:05:37  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:05:37  elapsed milliseconds:0015
+2018-09-27 11:05:37  pop3:+OK POP server ready H mieueus014 0MZTTP-1gJu0I3Wiz-00LCOS
+2018-09-27 11:05:37  pop3:sending POP3 command USER
+2018-09-27 11:05:38  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:05:38  pop3:sending POP3 command PASS
+2018-09-27 11:05:38  pop3:-ERR authentication failed
+2018-09-27 11:05:38  pop3:sending POP3 command STAT
+2018-09-27 11:05:38  pop3:Connection state not = TRANSACTION
+2018-09-27 11:05:38  pop3:sending POP3 command LIST
+2018-09-27 11:05:38  pop3:list follows:
+2018-09-27 11:05:38  Connection state not = TRANSACTION
+2018-09-27 11:05:38  pop3:quit
+2018-09-27 11:05:38  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:06:38  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:06:38  elapsed milliseconds:0004
+2018-09-27 11:06:38  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:06:38  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:06:38  elapsed milliseconds:0014
+2018-09-27 11:06:38  pop3:+OK POP server ready H mieueus017 1Mj9Nh-1fZw8J05pd-00f3jC
+2018-09-27 11:06:38  pop3:sending POP3 command USER
+2018-09-27 11:06:39  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:06:39  pop3:sending POP3 command PASS
+2018-09-27 11:06:39  pop3:-ERR authentication failed
+2018-09-27 11:06:39  pop3:sending POP3 command STAT
+2018-09-27 11:06:39  pop3:Connection state not = TRANSACTION
+2018-09-27 11:06:39  pop3:sending POP3 command LIST
+2018-09-27 11:06:39  pop3:list follows:
+2018-09-27 11:06:39  Connection state not = TRANSACTION
+2018-09-27 11:06:39  pop3:quit
+2018-09-27 11:06:39  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:07:39  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:07:39  elapsed milliseconds:0004
+2018-09-27 11:07:39  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:07:39  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:07:39  elapsed milliseconds:0014
+2018-09-27 11:07:39  pop3:+OK POP server ready H mieueus016 0MEW9H-1fz36X1FbF-00FgTS
+2018-09-27 11:07:39  pop3:sending POP3 command USER
+2018-09-27 11:07:40  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:07:40  pop3:sending POP3 command PASS
+2018-09-27 11:07:40  pop3:-ERR authentication failed
+2018-09-27 11:07:40  pop3:sending POP3 command STAT
+2018-09-27 11:07:40  pop3:Connection state not = TRANSACTION
+2018-09-27 11:07:40  pop3:sending POP3 command LIST
+2018-09-27 11:07:40  pop3:list follows:
+2018-09-27 11:07:40  Connection state not = TRANSACTION
+2018-09-27 11:07:40  pop3:quit
+2018-09-27 11:07:40  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:08:40  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:08:40  elapsed milliseconds:0004
+2018-09-27 11:08:40  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:08:40  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:08:40  elapsed milliseconds:0014
+2018-09-27 11:08:41  pop3:+OK POP server ready H mieueus013 0MYNgF-1gImty3fzV-00V8DI
+2018-09-27 11:08:41  pop3:sending POP3 command USER
+2018-09-27 11:08:41  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:08:41  pop3:sending POP3 command PASS
+2018-09-27 11:08:41  pop3:-ERR authentication failed
+2018-09-27 11:08:41  pop3:sending POP3 command STAT
+2018-09-27 11:08:41  pop3:Connection state not = TRANSACTION
+2018-09-27 11:08:41  pop3:sending POP3 command LIST
+2018-09-27 11:08:41  pop3:list follows:
+2018-09-27 11:08:41  Connection state not = TRANSACTION
+2018-09-27 11:08:41  pop3:quit
+2018-09-27 11:08:41  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
+2018-09-27 11:09:41  sql=
+select pj_id, pj_pop3_username, pj_pop3_password	from projects where pj_enable_pop3 = 1
+2018-09-27 11:09:41  elapsed milliseconds:0004
+2018-09-27 11:09:41  pop3:processing project 2 using account jagadaeesh@millionitechnology.com
+2018-09-27 11:09:41  sql=
+/*fetch defaults*/
+declare @pj int
+declare @ct int
+declare @pr int
+declare @st int
+declare @udf int
+set @pj = 0
+set @ct = 0
+set @pr = 0
+set @st = 0
+set @udf = 0
+select @pj = pj_id from projects where pj_default = 1 order by pj_name
+select @ct = ct_id from categories where ct_default = 1 order by ct_name
+select @pr = pr_id from priorities where pr_default = 1 order by pr_name
+select @st = st_id from statuses where st_default = 1 order by st_name
+select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf
+2018-09-27 11:09:41  elapsed milliseconds:0014
+2018-09-27 11:09:42  pop3:+OK POP server ready H mieueus018 1MPYEQ-1gRtcd2bic-00MZxq
+2018-09-27 11:09:42  pop3:sending POP3 command USER
+2018-09-27 11:09:42  pop3:+OK password required for user "jagadaeesh@millionitechnology.com"
+2018-09-27 11:09:42  pop3:sending POP3 command PASS
+2018-09-27 11:09:43  pop3:-ERR authentication failed
+2018-09-27 11:09:43  pop3:sending POP3 command STAT
+2018-09-27 11:09:43  pop3:Connection state not = TRANSACTION
+2018-09-27 11:09:43  pop3:sending POP3 command LIST
+2018-09-27 11:09:43  pop3:list follows:
+2018-09-27 11:09:43  Connection state not = TRANSACTION
+2018-09-27 11:09:43  pop3:quit
+2018-09-27 11:09:43  pop3:Error in read_single_line_response(): System.IO.IOException: Unable to read data from the transport connection: An established connection was aborted by the software in your host machine. ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.StreamReader.ReadBuffer()
+   at System.IO.StreamReader.ReadLine()
+   at POP3Client.POP3client.read_single_line_response() in c:\btnet\www\App_Code\POP3Client.cs:line 187
+disconnected successfully.
